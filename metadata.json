@@ -1,0 +1,6 @@
+{
+  "name": "Hello Kitty's Sweet Cafe & Bakery",
+  "description": "The official Hello Kitty Sweet Cafe & Village website featuring interactive arcade games, bakery menu, character profiles, dress-up studio, village map, and fan guestbook.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

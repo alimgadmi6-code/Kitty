@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    background-color: #fff5f7;
+    color: #4a2835;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Fredoka', 'Quicksand', cursive, sans-serif;
+  }
+
+  .font-fancy {
+    font-family: 'Cherry Bomb One', cursive;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes pulseHeart {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes sparkleSpin {
+  0% {
+    transform: rotate(0deg) scale(0.85);
+    opacity: 0.7;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(0.85);
+    opacity: 0.7;
+  }
+}
+
+.animate-float {
+  animation: floatSlow 3.2s ease-in-out infinite;
+}
+
+.animate-heart {
+  animation: pulseHeart 1.8s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkleSpin 4s linear infinite;
+}
+
+/* Custom soft pastel scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #ffe6eb;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff85a1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff5277;
+}
