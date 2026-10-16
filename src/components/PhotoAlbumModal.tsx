@@ -29,7 +29,7 @@ export const PhotoAlbumModal: React.FC<PhotoAlbumModalProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-xl">📸</span>
             <h3 className="font-bold font-display text-red-600 text-lg">
-              Hello Kitty's Memory Album
+              1st Anniversary & Kitty Memory Album 💕
             </h3>
             <span className="text-xs px-2 py-0.5 rounded-full bg-pink-200 text-pink-800 font-bold">
               {album.length} {album.length === 1 ? 'Snapshot' : 'Snapshots'}
@@ -56,7 +56,7 @@ export const PhotoAlbumModal: React.FC<PhotoAlbumModalProps> = ({
               </div>
               <h4 className="font-bold text-gray-800 text-base mb-1">Your Album is Empty!</h4>
               <p className="text-xs text-gray-500 max-w-sm mb-4">
-                Dress up Hello Kitty with cute ribbons, hats, and dresses, then snap a lovely polaroid memory!
+                Dress up Hello Kitty with anniversary ribbons, tiaras, and bouquets, or upload a real couple snapshot!
               </p>
               <button
                 onClick={() => {
@@ -91,13 +91,17 @@ export const PhotoAlbumModal: React.FC<PhotoAlbumModalProps> = ({
 
                   {/* Polaroid Frame */}
                   <div className="w-full aspect-square bg-gradient-to-b from-pink-100 via-rose-50 to-amber-50 rounded-xl overflow-hidden border border-pink-200 flex items-center justify-center relative shadow-inner">
-                    <KittySvg
-                      size={150}
-                      bowId={photo.outfit.bowId}
-                      outfitId={photo.outfit.outfitId}
-                      handheldId={photo.outfit.handheldId}
-                      expression="happy"
-                    />
+                    {photo.dataUrl ? (
+                      <img src={photo.dataUrl} alt={photo.caption} className="w-full h-full object-cover" />
+                    ) : (
+                      <KittySvg
+                        size={150}
+                        bowId={photo.outfit.bowId}
+                        outfitId={photo.outfit.outfitId}
+                        handheldId={photo.outfit.handheldId}
+                        expression="happy"
+                      />
+                    )}
                     {/* Sticker stamp */}
                     <span className="absolute top-2 left-2 text-2xl drop-shadow-xs">
                       {photo.sticker}

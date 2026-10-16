@@ -118,6 +118,22 @@ export const VillageMapPage: React.FC<VillageMapPageProps> = ({
               <span className="text-[11px] font-bold mt-1 whitespace-nowrap">Donut Pond</span>
             </button>
 
+            {/* 0. Anniversary Sunset Gazebo (Center) */}
+            <button
+              onClick={() => {
+                kawaiiAudio.playPop();
+                setSelectedLandmarkId('anniversary_gazebo');
+              }}
+              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-2xl border-2 transition-all cursor-pointer shadow-md flex flex-col items-center ${
+                selectedLandmarkId === 'anniversary_gazebo'
+                  ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white border-white scale-110 ring-4 ring-pink-300 z-30'
+                  : 'bg-white text-red-600 border-pink-400 hover:scale-105 z-10'
+              }`}
+            >
+              <span className="text-2xl animate-pulse">🌟</span>
+              <span className="text-[11px] font-bold mt-1 whitespace-nowrap">Anniversary Gazebo</span>
+            </button>
+
             {/* 5. Cloud Terrace (Top-Right) */}
             <button
               onClick={() => {

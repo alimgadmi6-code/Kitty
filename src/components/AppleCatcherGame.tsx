@@ -145,7 +145,7 @@ export const AppleCatcherGame: React.FC<AppleCatcherGameProps> = ({
       let isHazard = false;
 
       if (isFeverActive) {
-        // Fever mode spawns only lovely rewards!
+        // Fever mode spawns only sparkling rewards!
         if (randomTypeRoll < 0.4) {
           type = 'golden_apple';
           points = 30;
@@ -495,7 +495,7 @@ export const AppleCatcherGame: React.FC<AppleCatcherGameProps> = ({
               Harvest Complete!
             </h2>
             <p className="text-sm text-pink-700 mb-4 font-medium">
-              Look at all the lovely baking supplies you helped gather!
+              Look at all the delightful baking supplies you helped gather!
             </p>
 
             <div className="bg-pink-50 rounded-2xl p-4 border border-pink-200 w-full max-w-xs mb-5 flex flex-col gap-2 text-sm">

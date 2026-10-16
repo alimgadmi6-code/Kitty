@@ -4,9 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { WebsiteTab, GameState, PolaroidPhoto, GuestbookEntry } from './types';
+import { WebsiteTab, GameState, PolaroidPhoto, GuestbookEntry, CoupleProfile, BucketListItem } from './types';
 import { INITIAL_GAME_STATE } from './data/gameData';
 import { WebsiteHeader } from './components/WebsiteHeader';
+import { AnniversaryHub } from './components/AnniversaryHub';
 import { HomePortal } from './components/HomePortal';
 import { GamesPortal } from './components/GamesPortal';
 import { CafeMenuPage } from './components/CafeMenuPage';
@@ -16,16 +17,59 @@ import { CafeDecorRoom } from './components/CafeDecorRoom';
 import { VillageMapPage } from './components/VillageMapPage';
 import { WebsiteFooter } from './components/WebsiteFooter';
 import { PhotoAlbumModal } from './components/PhotoAlbumModal';
-import { kawaiiAudio } from './audio/kawaiiAudio';
+import { kawaiiAudio, MUSIC_TRACKS } from './audio/kawaiiAudio';
 
-const STORAGE_KEY = 'hello_kitty_sweet_cafe_website_v2';
+const STORAGE_KEY = 'hello_kitty_sweet_cafe_anniversary_v2';
 
 export default function App() {
   const [gameState, setGameState] = useState<GameState>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        return { ...INITIAL_GAME_STATE, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        const profile = parsed.coupleProfile ? {
+          ...INITIAL_GAME_STATE.coupleProfile,
+          ...parsed.coupleProfile,
+          anniversaryDate: parsed.coupleProfile.anniversaryDate === '2025-10-16' ? '2025-10-15' : (parsed.coupleProfile.anniversaryDate || '2025-10-15'),
+          partner1: (!parsed.coupleProfile.partner1 || parsed.coupleProfile.partner1 === 'My Love' || parsed.coupleProfile.partner1 === 'Bestie 1') ? 'Tafeh' : parsed.coupleProfile.partner1,
+          partner2: (!parsed.coupleProfile.partner2 || parsed.coupleProfile.partner2 === 'Sweetheart' || parsed.coupleProfile.partner2 === 'Bestie 2') ? 'Tafeha' : parsed.coupleProfile.partner2,
+          customNote: (!parsed.coupleProfile.customNote || parsed.coupleProfile.customNote.startsWith('365 days of non-stop laughs') || parsed.coupleProfile.customNote.includes('best partner in crime')) 
+            ? 'n3mbou zinek :D,mkch harba muhehehe 😈' 
+            : parsed.coupleProfile.customNote,
+        } : INITIAL_GAME_STATE.coupleProfile;
+
+        const isOldDefaultItem = (b: BucketListItem) => 
+          !b || !b.title ||
+          b.title.includes('Sanrio') || 
+          b.title.includes('Hello Kitty') || 
+          b.title.includes('apple pie') || 
+          b.title.includes('flower meadow') || 
+          b.title.includes('Studio Ghibli') || 
+          b.title.includes('photo booth polaroids') || 
+          b.title.includes('getaway cabin') || 
+          b.title.includes('very first day hanging out');
+
+        let migratedBucketList = INITIAL_GAME_STATE.bucketList;
+        if (Array.isArray(parsed.bucketList) && parsed.bucketList.length > 0) {
+          const hasOldDefaults = parsed.bucketList.some(isOldDefaultItem);
+          if (hasOldDefaults) {
+            // Keep any custom goals the user added manually, while replacing old template suggestions
+            const userCustomGoals = parsed.bucketList.filter((b: BucketListItem) => 
+              !isOldDefaultItem(b) && !INITIAL_GAME_STATE.bucketList.some(item => item.title === b.title)
+            );
+            migratedBucketList = [...INITIAL_GAME_STATE.bucketList, ...userCustomGoals];
+          } else {
+            migratedBucketList = parsed.bucketList;
+          }
+        }
+
+        return {
+          ...INITIAL_GAME_STATE,
+          ...parsed,
+          coupleProfile: profile,
+          bucketList: migratedBucketList,
+          unlockedItems: Array.from(new Set([...INITIAL_GAME_STATE.unlockedItems, ...(parsed.unlockedItems || [])]))
+        };
       }
     } catch {
       // Fallback
@@ -33,7 +77,7 @@ export default function App() {
     return INITIAL_GAME_STATE;
   });
 
-  const [currentTab, setCurrentTab] = useState<WebsiteTab>('home');
+  const [currentTab, setCurrentTab] = useState<WebsiteTab>('anniversary');
   const [isAlbumOpen, setIsAlbumOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -50,8 +94,9 @@ export default function App() {
   useEffect(() => {
     kawaiiAudio.setSoundMuted(!gameState.soundEnabled);
     kawaiiAudio.setMusicMuted(!gameState.musicEnabled);
+    const initialTrack = gameState.activeMusicTrack || 'paris_cafe';
     if (gameState.musicEnabled) {
-      kawaiiAudio.startMusic(gameState.activeMusicTrack);
+      kawaiiAudio.startMusic(initialTrack);
     }
     return () => {
       kawaiiAudio.stopMusic();
@@ -78,6 +123,13 @@ export default function App() {
     const next = !gameState.musicEnabled;
     kawaiiAudio.setMusicMuted(!next);
     setGameState((prev) => ({ ...prev, musicEnabled: next }));
+    if (next) {
+      const track = gameState.activeMusicTrack || 'paris_cafe';
+      const info = MUSIC_TRACKS.find((t) => t.id === track);
+      showToast(`🎵 Kawaii BGM Resumed: ${info ? `${info.icon} ${info.name}` : track}`);
+    } else {
+      showToast('🔇 Kawaii BGM Paused');
+    }
   };
 
   // Change Music Track
@@ -85,15 +137,26 @@ export default function App() {
     setGameState((prev) => ({ ...prev, activeMusicTrack: track, musicEnabled: true }));
     kawaiiAudio.setMusicMuted(false);
     kawaiiAudio.startMusic(track);
-    showToast(
-      `🎵 Now Playing: ${
-        track === 'waltz'
-          ? 'Pastel Tea Party'
-          : track === 'arcade'
-          ? 'Sugar Rush Arcade'
-          : "Kitty's Morning Walk"
-      }`
-    );
+    const info = MUSIC_TRACKS.find((t) => t.id === track);
+    showToast(`🎵 Now Playing: ${info ? `${info.icon} ${info.name}` : track}`);
+  };
+
+  // Skip to Next Music Track
+  const handleNextMusicTrack = () => {
+    const nextId = kawaiiAudio.nextTrack();
+    setGameState((prev) => ({ ...prev, activeMusicTrack: nextId, musicEnabled: true }));
+    kawaiiAudio.setMusicMuted(false);
+    const info = MUSIC_TRACKS.find((t) => t.id === nextId);
+    showToast(`⏭️ Changed Music: ${info ? `${info.icon} ${info.name}` : nextId}`);
+  };
+
+  // Skip to Previous Music Track
+  const handlePrevMusicTrack = () => {
+    const prevId = kawaiiAudio.prevTrack();
+    setGameState((prev) => ({ ...prev, activeMusicTrack: prevId, musicEnabled: true }));
+    kawaiiAudio.setMusicMuted(false);
+    const info = MUSIC_TRACKS.find((t) => t.id === prevId);
+    showToast(`⏮️ Changed Music: ${info ? `${info.icon} ${info.name}` : prevId}`);
   };
 
   // Earn Coins and Apples
@@ -180,6 +243,39 @@ export default function App() {
     showToast('💌 Message posted to Hello Kitty\'s Guestbook!');
   };
 
+  // Update Couple Profile
+  const handleUpdateCoupleProfile = (profile: CoupleProfile) => {
+    setGameState((prev) => ({ ...prev, coupleProfile: profile }));
+    showToast('💖 Anniversary Details Saved!');
+  };
+
+  // Update Bucket List
+  const handleUpdateBucketList = (items: BucketListItem[]) => {
+    setGameState((prev) => ({ ...prev, bucketList: items }));
+  };
+
+  // Take Anniversary Photo
+  const handleTakeAnniversaryPhoto = (caption: string, dataUrl?: string) => {
+    const newPhoto: PolaroidPhoto = {
+      id: `photo_anniv_${Date.now()}`,
+      date: 'Today • 1 Year',
+      caption,
+      outfit: {
+        bowId: gameState.activeBow,
+        outfitId: gameState.activeOutfit,
+        handheldId: gameState.activeHandheld,
+        bgId: gameState.activeBackground,
+      },
+      sticker: '💖',
+      dataUrl,
+    };
+    setGameState((prev) => ({
+      ...prev,
+      album: [newPhoto, ...prev.album],
+    }));
+    showToast('📸 Photo added to Anniversary Scrapbook!');
+  };
+
   return (
     <div className="min-h-screen bg-[#fff5f7] flex flex-col text-[#4a2835]">
       {/* Official Website Header with Nav & Controls */}
@@ -196,8 +292,13 @@ export default function App() {
         strawberryGems={gameState.strawberryGems}
         soundEnabled={gameState.soundEnabled}
         musicEnabled={gameState.musicEnabled}
+        activeMusicTrack={gameState.activeMusicTrack}
+        coupleProfile={gameState.coupleProfile}
         onToggleSound={handleToggleSound}
         onToggleMusic={handleToggleMusic}
+        onChangeMusicTrack={handleChangeMusicTrack}
+        onNextMusicTrack={handleNextMusicTrack}
+        onPrevMusicTrack={handlePrevMusicTrack}
         onOpenAlbum={() => setIsAlbumOpen(true)}
         albumCount={gameState.album.length}
       />
@@ -212,6 +313,23 @@ export default function App() {
 
       {/* Website Tab Pages */}
       <main className="flex-1 py-4 sm:py-6">
+        {currentTab === 'anniversary' && (
+          <AnniversaryHub
+            coupleProfile={gameState.coupleProfile}
+            onUpdateCoupleProfile={handleUpdateCoupleProfile}
+            bucketList={gameState.bucketList}
+            onUpdateBucketList={handleUpdateBucketList}
+            onSelectTab={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onClaimReward={(coins, gems) => handleEarnBakeryRewards(coins, gems)}
+            onTakeAnniversaryPhoto={handleTakeAnniversaryPhoto}
+            activeMusicTrack={gameState.activeMusicTrack}
+            onChangeMusicTrack={handleChangeMusicTrack}
+          />
+        )}
+
         {currentTab === 'home' && (
           <HomePortal
             onSelectTab={(tab) => {
@@ -223,6 +341,7 @@ export default function App() {
             highScoreCatcher={gameState.highScoreCatcher}
             ordersFulfilled={gameState.ordersFulfilled}
             guestbook={gameState.guestbook}
+            coupleProfile={gameState.coupleProfile}
             onAddGuestbookEntry={handleAddGuestbookEntry}
             onClaimDailyReward={(coins, apples) => handleEarnCoins(coins, apples)}
             activeBow={gameState.activeBow}

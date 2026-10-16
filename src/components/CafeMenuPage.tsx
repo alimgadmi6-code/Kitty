@@ -51,7 +51,7 @@ export const CafeMenuPage: React.FC<CafeMenuPageProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold mb-2">
             <span>🍰</span>
-            <span>Handcrafted with Love Daily</span>
+            <span>Handcrafted Fresh Daily with Care</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold font-display text-red-600">
             Hello Kitty's Sweet Bakery Cafe Menu
@@ -204,7 +204,7 @@ export const CafeMenuPage: React.FC<CafeMenuPageProps> = ({
             Hello Kitty's Master Baker Tip
           </h4>
           <p className="text-xs text-pink-900/80 font-medium mt-0.5">
-            "The secret to mama's apple pie is chilling the pastry butter dough for 30 minutes, and brushing the top crust with fresh honey apple syrup before baking with lots of love!"
+            "The secret to mama's apple pie is chilling the pastry butter dough for 30 minutes, and brushing the top crust with fresh honey apple syrup before baking with lots of cheer and care!"
           </p>
         </div>
       </div>

@@ -2,7 +2,34 @@
  * Types and interfaces for Hello Kitty's Sweet Cafe & Village Website
  */
 
-export type WebsiteTab = 'home' | 'games' | 'menu' | 'characters' | 'dressup' | 'decor' | 'village';
+export type WebsiteTab = 'anniversary' | 'home' | 'games' | 'menu' | 'characters' | 'dressup' | 'decor' | 'village';
+
+export interface CoupleProfile {
+  partner1: string;
+  partner2: string;
+  anniversaryDate: string; // e.g., '2025-10-16'
+  customNote: string;
+  loveLockLocked: boolean;
+  cakeCelebrated: boolean;
+}
+
+export interface AnniversaryMilestone {
+  id: string;
+  dayOrMonth: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: 'first_date' | 'adventure' | 'milestone' | 'cozy' | 'anniversary';
+  dateStr?: string;
+}
+
+export interface BucketListItem {
+  id: string;
+  title: string;
+  category: string;
+  completed: boolean;
+  notes?: string;
+}
 
 export type GameMode = 'hub' | 'catcher' | 'bakery' | 'dressup' | 'decor';
 
@@ -142,4 +169,6 @@ export interface GameState {
   cafePlushie: string;
   album: PolaroidPhoto[];
   guestbook: GuestbookEntry[];
+  coupleProfile: CoupleProfile;
+  bucketList: BucketListItem[];
 }

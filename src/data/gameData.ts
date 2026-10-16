@@ -1,4 +1,4 @@
-import { FriendCharacter, Ingredient, Recipe, WardrobeItem, DecorItem, MenuItem, GuestbookEntry, GameState } from '../types';
+import { FriendCharacter, Ingredient, Recipe, WardrobeItem, DecorItem, MenuItem, GuestbookEntry, GameState, CoupleProfile, AnniversaryMilestone, BucketListItem } from '../types';
 
 export const FRIENDS_DATA: FriendCharacter[] = [
   {
@@ -13,7 +13,7 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     birthday: 'November 1',
     height: '5 apples tall',
     weight: '3 apples heavy',
-    personality: 'Cheerful, warm-hearted, kind to everyone, loves baking.',
+    personality: 'Cheerful, warm-hearted, kind to everyone, enjoys baking.',
     funFact: "Her blood type is A, and she lives in the suburbs of London with her parents and twin sister Mimmy!"
   },
   {
@@ -29,7 +29,7 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     height: 'Like a small bunny',
     weight: 'Fluffy as a cotton ball',
     personality: 'Innocent, sweet, polite, and very caring.',
-    funFact: "Her trademark hood was handcrafted lovingly by her grandmother!"
+    funFact: "Her trademark hood was handcrafted with care by her grandmother!"
   },
   {
     id: 'cinnamoroll',
@@ -43,7 +43,7 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     birthday: 'March 6',
     height: '21 cm',
     weight: 'Cloud-light',
-    personality: 'Quiet, shy, friendly, loves napping on customers\' laps.',
+    personality: 'Quiet, shy, friendly, enjoys napping on customers\' laps.',
     funFact: "He can fly through the sky by flapping his long, floppy ears!"
   },
   {
@@ -58,7 +58,7 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     birthday: 'April 16',
     height: '5 medium puddings tall',
     weight: '1 giant watermelon',
-    personality: 'Easygoing, loves napping, collecting shoes, and eating custard.',
+    personality: 'Easygoing, enjoys napping, collecting shoes, and eating custard.',
     funFact: "His favorite phrase is 'Let's go out!' and his best friend is Muffin the hamster!"
   },
   {
@@ -73,8 +73,8 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     birthday: 'October 31 (Halloween)',
     height: 'Cute compact pocket size',
     weight: 'Lighter than a spellbook',
-    personality: 'Sassy tomboy on the outside, hopeless romantic diary-writer on the inside.',
-    funFact: "She writes poems and romance novels in her secret diary called 'The Kuromi Notebook'!"
+    personality: 'Sassy tomboy on the outside, imaginative story diary-writer on the inside.',
+    funFact: "She writes poems and mystery novels in her secret diary called 'The Kuromi Notebook'!"
   },
   {
     id: 'keroppi',
@@ -88,12 +88,48 @@ export const FRIENDS_DATA: FriendCharacter[] = [
     birthday: 'July 10',
     height: '1 frog jump',
     weight: '3 water lilies',
-    personality: 'Bubbly, athletic, loves swimming and boomerangs.',
+    personality: 'Bubbly, athletic, enjoys swimming and boomerangs.',
     funFact: "He lives with his family in the Kero Kero House next to Donut Pond!"
   }
 ];
 
 export const MENU_ITEMS: MenuItem[] = [
+  {
+    id: 'menu_anniversary_cake',
+    name: '365-Day Anniversary Heart Cake',
+    category: 'pastry',
+    priceCoins: 100,
+    description: 'Double-tier festive cake filled with strawberry champagne cream, decorated with white chocolate pearls and a golden "1 Year" candle.',
+    icon: '🎂',
+    sweetness: 5,
+    tags: ['1st Anniversary Special', 'Celebration Duo', 'October 15'],
+    favoriteOf: 'Best Friends Duo',
+    prepTime: 'Handcrafted with Care'
+  },
+  {
+    id: 'menu_anniversary_fondue',
+    name: 'Besties Berry & Dark Chocolate Fondue',
+    category: 'dessert',
+    priceCoins: 85,
+    description: 'Rich Belgian melted dark chocolate fondue served with fluffy marshmallows, fresh berries, and sweet butter wafers for sharing.',
+    icon: '🍓',
+    sweetness: 4,
+    tags: ['Besties Sharing', 'Celebration', 'Warm Treat'],
+    favoriteOf: 'Best Friends Duo',
+    prepTime: '2 mins'
+  },
+  {
+    id: 'menu_anniversary_rose_boba',
+    name: 'Anniversary Blossom Rose Boba',
+    category: 'drink',
+    priceCoins: 65,
+    description: 'Fragrant French rose milk tea brewed with strawberry blossom syrup, tender tapioca pearls, and crowned with edible sugar crystal stars.',
+    icon: '🧋',
+    sweetness: 4,
+    tags: ['Anniversary Brew', 'Celebration', 'Limited Edition'],
+    favoriteOf: 'Best Friends',
+    prepTime: '3 mins'
+  },
   {
     id: 'menu_apple_pie',
     name: "Mama's Signature Warm Apple Pie",
@@ -206,6 +242,15 @@ export const MENU_ITEMS: MenuItem[] = [
 
 export const VILLAGE_LANDMARKS = [
   {
+    id: 'anniversary_gazebo',
+    name: 'Anniversary Sunset Rose Gazebo & Wish Bridge',
+    icon: '🌟',
+    description: 'A charming pastel pavilion adorned with pink rose arches, warm lanterns, and a golden friendship fence where companions lock friendship padlocks to celebrate their anniversaries.',
+    hours: 'Open 24/7 for Stargazing & Hangouts',
+    specialty: 'Friendship Locks, Heart Cakes & Sunset Wishes',
+    visitors: 'Best Friends Celebrating 1 Year, Dear Daniel & Kitty'
+  },
+  {
     id: 'cottage_bakery',
     name: "Hello Kitty's Cottage & Bakery",
     icon: '🏡',
@@ -254,29 +299,139 @@ export const VILLAGE_LANDMARKS = [
 
 export const INITIAL_GUESTBOOK: GuestbookEntry[] = [
   {
-    id: 'gb_1',
-    author: 'Emily & Lily',
-    message: 'Hello Kitty, your apple pie is the most delicious treat in the world! We love you so much! 🎀',
-    sticker: '🎀',
+    id: 'gb_anniversary_daniel',
+    author: 'Dear Daniel 🤵',
+    message: 'Happy 1st Anniversary to the coolest, most wonderful duo in the whole world! 365 days of epic adventures and sharing smiles. Wishing you endless years of pure fun and memories! 🌟🎉',
+    sticker: '⭐',
     date: 'Today',
     friendId: 'kitty'
   },
   {
-    id: 'gb_2',
-    author: 'Sanrio Fan Sakura',
-    message: 'Cinnamoroll looks so adorable in the cafe! The cloud bun was heavenly! ☁️✨',
+    id: 'gb_anniversary_melody',
+    author: 'My Melody 🌸',
+    message: 'Happy 1 Year Anniversary! Mama baked an extra-special double strawberry star shortcake for the two of you! You make the best team ever! 🍓✨',
+    sticker: '🎀',
+    date: 'Today',
+    friendId: 'melody'
+  },
+  {
+    id: 'gb_anniversary_cinnamo',
+    author: 'Cinnamoroll ☁️',
+    message: 'I flew up into the highest clouds to scatter golden stardust for your 1-year anniversary! You two always have so much fun together! 🌟',
     sticker: '⭐',
     date: 'Yesterday',
     friendId: 'cinnamoroll'
   },
   {
-    id: 'gb_3',
-    author: 'Chloe from London',
-    message: 'Kuromi\'s blackberry tart is secretly my favorite! Spooky and sweet forever! 🖤',
-    sticker: '💖',
-    date: '2 days ago',
+    id: 'gb_anniversary_kuromi',
+    author: 'Kuromi 🖤',
+    message: 'Hmph! 365 days of being inseparable besties? I wrote a super cool tribute for your anniversary in my secret notebook, but do NOT tell anyone! You guys rock! 🎀',
+    sticker: '🖤',
+    date: 'Yesterday',
     friendId: 'kuromi'
+  },
+  {
+    id: 'gb_anniversary_purin',
+    author: 'Pompompurin 🍮',
+    message: 'A whole year together calls for an extra-large custard pudding! May your journey ahead be as sweet and golden as caramel! 🍮',
+    sticker: '🎀',
+    date: '2 days ago',
+    friendId: 'purin'
   }
+];
+
+export const DEFAULT_COUPLE_PROFILE: CoupleProfile = {
+  partner1: 'Tafeh',
+  partner2: 'Tafeha',
+  anniversaryDate: '2025-10-15',
+  customNote: 'n3mbou zinek :D,mkch harba muhehehe 😈',
+  loveLockLocked: true,
+  cakeCelebrated: false
+};
+
+export const ANNIVERSARY_MILESTONES: AnniversaryMilestone[] = [
+  {
+    id: 'm_day1',
+    dayOrMonth: 'Day 1 • October 15',
+    title: 'Where Our Journey Began ✨',
+    description: 'The first day we met and decided to hang out. Big smiles, endless laughs, and knowing right away that we would be the best team ever.',
+    icon: '🎀',
+    category: 'milestone',
+    dateStr: 'Day 1'
+  },
+  {
+    id: 'm_month1',
+    dayOrMonth: '1 Month • November',
+    title: 'First Month of Non-Stop Laughs 🌟',
+    description: 'Sending funny memes every single day, late-night chats talking about everything and nothing, and making our very first hangout plans.',
+    icon: '💌',
+    category: 'milestone',
+    dateStr: 'Month 1'
+  },
+  {
+    id: 'm_month3',
+    dayOrMonth: '3 Months • January',
+    title: 'Our First Roadtrip & Inside Jokes 🚗',
+    description: 'Singing songs off-key at the top of our lungs with the windows cracked open, finding cute roadside cafes, and creating our legendary inside jokes.',
+    icon: '☕',
+    category: 'adventure',
+    dateStr: 'Month 3'
+  },
+  {
+    id: 'm_month6',
+    dayOrMonth: '6 Months • April',
+    title: 'Half a Year of Sweet Memories 🍓',
+    description: 'Halfway to our 1-year mark! Having a blast sharing snacks, hanging out, and realizing we are completely on the same wavelength.',
+    icon: '🏡',
+    category: 'milestone',
+    dateStr: 'Month 6'
+  },
+  {
+    id: 'm_month9',
+    dayOrMonth: '9 Months • July',
+    title: 'True Friends & Unstoppable Team 🛡️',
+    description: 'Supporting each other through busy work days and stressful weeks. Knowing you always have my back no matter what.',
+    icon: '🌟',
+    category: 'cozy',
+    dateStr: 'Month 9'
+  },
+  {
+    id: 'm_year1',
+    dayOrMonth: '365 Days • Today!',
+    title: 'Happy 1st Anniversary! 🌟',
+    description: '365 days of pure happiness, 8,760 hours of warm smiles, and 525,600 minutes together. Thank you for being the most amazing friend and partner!',
+    icon: '⭐',
+    category: 'anniversary',
+    dateStr: '1 Year!'
+  }
+];
+
+export const COUPLE_BUCKET_LIST: BucketListItem[] = [
+  { id: 'b1', title: 'ndourou fi il mahdiaa', category: 'Adventures', completed: false },
+  { id: 'b2', title: 'nmchu lil soug ;)', category: 'Adventures', completed: false },
+  { id: 'b3', title: 'nokl mn makeltk', category: 'Food', completed: false },
+  { id: 'b4', title: 'tokli mn makelti 😊🤞', category: 'Food', completed: false },
+  { id: 'b5', title: 'twali tokli 3la ro7k wa tochrbi il ma 💧', category: 'Care', completed: false },
+  { id: 'b6', title: 'n7ki m3a sabah bi tari9aten ma 🤷‍♂️', category: 'Fun', completed: false },
+  { id: 'b7', title: 'nchru dbach m3a b3adnaa(3la dha9 b3adna zada) 😈', category: 'Shopping', completed: false }
+];
+
+export const ANNIVERSARY_REASONS: string[] = [
+  "The way your eyes crinkle with pure happiness when you laugh out loud 🌟",
+  "How you always remember my favorite treats and coffee orders ☕",
+  "How we can talk for hours about absolute nonsense and never get bored 🎈",
+  "How safe and happy I feel whenever we hang out and catch up 🤗",
+  "Your hilarious, goofy side that always makes me laugh until my stomach hurts 🤣",
+  "How supportive you are of my dreams, always cheering me on like a #1 fan 🌟",
+  "The way you make ordinary grocery store runs feel like an epic adventure 🛒",
+  "How we always seem to know what the other is thinking with just one glance 👀",
+  "How patient and understanding you are, even on my most stressful days 🌸",
+  "How we share snacks, french fries, and desserts without even asking 🍟",
+  "How we can burst out laughing just by making eye contact across a crowded room 😂",
+  "The random hilarious memes and cheerful check-in messages you send in the middle of the day 💌",
+  "How effortlessly you make every single day brighter and more fun just by being around ✨",
+  "The fact that 365 days later, hanging out with you is still the highlight of my week 🌈",
+  "Because you are the best companion, partner-in-crime, and friend in the whole universe 🌟"
 ];
 
 export const INGREDIENTS_DATA: Ingredient[] = [
@@ -307,7 +462,7 @@ export const RECIPES_DATA: Recipe[] = [
   {
     id: 'recipe_apple_pie',
     name: "Mama's Classic Apple Pie",
-    description: 'Hello Kitty\'s signature freshly-baked apple pie made with love.',
+    description: 'Hello Kitty\'s signature freshly-baked apple pie made with care and sweetness.',
     targetCustomer: 'kitty',
     requiredIngredients: ['crust', 'apple', 'cinnamon', 'ribbon'],
     rewardCoins: 45,
@@ -410,14 +565,21 @@ export const WARDROBE_ITEMS: WardrobeItem[] = [
 
   // Backgrounds
   { id: 'bg_bakery', category: 'background', name: 'Cozy Cottage Bakery', icon: '🏡', cost: 0, unlocked: true },
+  { id: 'bg_anniversary_gazebo', category: 'background', name: 'Anniversary Sunset Rose Gazebo', icon: '🌅', cost: 0, unlocked: true },
   { id: 'bg_garden', category: 'background', name: 'Pastel Rose Tea Garden', icon: '🌷', cost: 150, unlocked: false },
   { id: 'bg_tokyo', category: 'background', name: 'Tokyo Rainbow Arcade', icon: '🌆', cost: 300, unlocked: false },
   { id: 'bg_starry', category: 'background', name: 'Cinnamoroll Star Sky', icon: '🌌', cost: 320, unlocked: false },
-  { id: 'bg_bedroom', category: 'background', name: 'Kawaii Pink Bedroom', icon: '🎀', cost: 240, unlocked: false }
+  { id: 'bg_bedroom', category: 'background', name: 'Kawaii Pink Bedroom', icon: '🎀', cost: 240, unlocked: false },
+
+  // Anniversary Special Items
+  { id: 'bow_anniversary_tiara', category: 'bow', name: 'Anniversary Sparkling Tiara', icon: '👑', cost: 0, unlocked: true, colorHex: '#ffd700' },
+  { id: 'outfit_wedding_dress', category: 'outfit', name: 'Anniversary Sparkling Celebration Dress', icon: '👗', cost: 200, unlocked: false, colorHex: '#fff0f5' },
+  { id: 'hand_rose_bouquet', category: 'handheld', name: 'Anniversary Red Rose Bouquet', icon: '💐', cost: 0, unlocked: true }
 ];
 
 export const DECOR_ITEMS: DecorItem[] = [
   { id: 'wall_pink_gingham', category: 'wallpaper', name: 'Pink Gingham Check', cost: 0, unlocked: true, icon: '🪟', previewColor: '#ffe5ec' },
+  { id: 'wall_anniversary_hearts', category: 'wallpaper', name: '1st Anniversary Golden Stars & Ribbons', cost: 0, unlocked: true, icon: '🌟', previewColor: '#fff0f3' },
   { id: 'wall_strawberry', category: 'wallpaper', name: 'Sweet Berry Vines', cost: 120, unlocked: false, icon: '🍓', previewColor: '#ffccd5' },
   { id: 'wall_cloud', category: 'wallpaper', name: 'Fluffy Blue Sky', cost: 180, unlocked: false, icon: '☁️', previewColor: '#d8f3dc' },
   { id: 'wall_lavender', category: 'wallpaper', name: 'Lavender Starlight', cost: 240, unlocked: false, icon: '✨', previewColor: '#e0c3fc' },
@@ -427,6 +589,7 @@ export const DECOR_ITEMS: DecorItem[] = [
   { id: 'floor_pink_carpet', category: 'flooring', name: 'Fluffy Strawberry Carpet', cost: 220, unlocked: false, icon: '🧶', previewColor: '#ffb3c6' },
 
   { id: 'table_ribbon', category: 'table', name: 'Red Ribbon Dining Table', cost: 0, unlocked: true, icon: '🪑', previewColor: '#ff4d6d' },
+  { id: 'table_anniversary_candle', category: 'table', name: 'Anniversary Candlelight Table', cost: 0, unlocked: true, icon: '🕯️', previewColor: '#ffe5ec' },
   { id: 'table_marble', category: 'table', name: 'Pastel Cafe Marble Table', cost: 160, unlocked: false, icon: '☕', previewColor: '#e9ecef' },
   { id: 'table_picnic', category: 'table', name: 'Garden Wood Picnic Table', cost: 250, unlocked: false, icon: '🧺', previewColor: '#cb997e' },
 
@@ -438,23 +601,52 @@ export const DECOR_ITEMS: DecorItem[] = [
 ];
 
 export const INITIAL_GAME_STATE: GameState = {
-  ribbonCoins: 300,
-  strawberryGems: 20,
+  ribbonCoins: 520,
+  strawberryGems: 30,
   highScoreCatcher: 0,
   applesHarvested: 0,
   ordersFulfilled: 0,
   soundEnabled: true,
   musicEnabled: true,
-  activeMusicTrack: 'kitty_cafe',
-  unlockedItems: ['bow_classic', 'outfit_classic', 'hand_apple', 'bg_bakery', 'wall_pink_gingham', 'floor_wood', 'table_ribbon', 'plush_kitty'],
-  activeBow: 'bow_classic',
+  activeMusicTrack: 'anniversary_love',
+  unlockedItems: [
+    'bow_classic', 
+    'bow_anniversary_tiara',
+    'outfit_classic', 
+    'hand_apple', 
+    'hand_rose_bouquet',
+    'bg_bakery', 
+    'bg_anniversary_gazebo',
+    'wall_pink_gingham', 
+    'wall_anniversary_hearts',
+    'floor_wood', 
+    'table_ribbon', 
+    'table_anniversary_candle',
+    'plush_kitty'
+  ],
+  activeBow: 'bow_anniversary_tiara',
   activeOutfit: 'outfit_classic',
-  activeHandheld: 'hand_apple',
-  activeBackground: 'bg_bakery',
-  cafeWallpaper: 'wall_pink_gingham',
+  activeHandheld: 'hand_rose_bouquet',
+  activeBackground: 'bg_anniversary_gazebo',
+  cafeWallpaper: 'wall_anniversary_hearts',
   cafeFloor: 'floor_wood',
-  cafeTable: 'table_ribbon',
+  cafeTable: 'table_anniversary_candle',
   cafePlushie: 'plush_kitty',
-  album: [],
-  guestbook: INITIAL_GUESTBOOK
+  album: [
+    {
+      id: 'photo_anniversary_default',
+      date: 'Today • 1 Year',
+      caption: 'Happy 1st Anniversary! 365 days together, and ready for many more adventures ahead! 🌟',
+      outfit: {
+        bowId: 'bow_anniversary_tiara',
+        outfitId: 'outfit_classic',
+        handheldId: 'hand_rose_bouquet',
+        bgId: 'bg_anniversary_gazebo'
+      },
+      sticker: '💖'
+    }
+  ],
+  guestbook: INITIAL_GUESTBOOK,
+  coupleProfile: DEFAULT_COUPLE_PROFILE,
+  bucketList: COUPLE_BUCKET_LIST
 };

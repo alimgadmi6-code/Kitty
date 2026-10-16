@@ -185,7 +185,7 @@ export const OrderRushGame: React.FC<OrderRushGameProps> = ({
             <span>🥧</span> Hello Kitty's Pastry Kitchen
           </h2>
           <p className="text-xs sm:text-sm text-pink-700 font-medium">
-            Assemble sweet bakery orders with love for Hello Kitty & friends!
+            Assemble sweet bakery orders with cheer and care for Hello Kitty & friends!
           </p>
         </div>
 

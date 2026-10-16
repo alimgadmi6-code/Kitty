@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WebsiteTab, GuestbookEntry } from '../types';
+import { WebsiteTab, GuestbookEntry, CoupleProfile } from '../types';
 import { FRIENDS_DATA, MENU_ITEMS } from '../data/gameData';
 import { KittySvg } from './KittySvg';
 import { FriendSvg } from './FriendSvg';
@@ -14,6 +14,7 @@ interface HomePortalProps {
   highScoreCatcher: number;
   ordersFulfilled: number;
   guestbook: GuestbookEntry[];
+  coupleProfile?: CoupleProfile;
   onAddGuestbookEntry: (entry: GuestbookEntry) => void;
   onClaimDailyReward: (coins: number, apples: number) => void;
   activeBow: string;
@@ -27,12 +28,14 @@ export const HomePortal: React.FC<HomePortalProps> = ({
   highScoreCatcher,
   ordersFulfilled,
   guestbook,
+  coupleProfile,
   onAddGuestbookEntry,
   onClaimDailyReward,
   activeBow,
   activeOutfit,
 }) => {
   const [hasClaimedGift, setHasClaimedGift] = useState<boolean>(false);
+  const [hasClaimedAnnivGift, setHasClaimedAnnivGift] = useState<boolean>(false);
   const [fanEmail, setFanEmail] = useState<string>('');
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
@@ -96,6 +99,68 @@ export const HomePortal: React.FC<HomePortalProps> = ({
 
   return (
     <div className="w-full max-w-6xl mx-auto p-3 sm:p-6 flex flex-col gap-8">
+      {/* 0. Dedicated 1st Anniversary Celebration Card */}
+      <div className="relative rounded-3xl overflow-hidden border-4 border-pink-300 shadow-lg bg-gradient-to-r from-red-500 via-pink-500 to-rose-400 p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="absolute top-2 right-4 text-3xl opacity-30 select-none animate-pulse">💖</div>
+        <div className="absolute bottom-2 left-6 text-2xl opacity-20 select-none">✨</div>
+
+        <div className="flex-1 text-center md:text-left z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-white text-xs font-bold mb-2">
+            <Sparkles className="w-3.5 h-3.5 animate-spin text-amber-200" />
+            <span>SPECIAL 1ST ANNIVERSARY CELEBRATION</span>
+            <span>⭐</span>
+          </div>
+
+          <h2 className="text-2xl sm:text-4xl font-black font-display tracking-tight text-white mb-2">
+            Happy 1 Year Anniversary, {coupleProfile ? coupleProfile.partner2 : 'Tafeha'}! 🎉 (October 15)
+          </h2>
+
+          <p className="text-pink-100 text-xs sm:text-sm font-medium max-w-xl leading-relaxed">
+            365 days of non-stop laughs, inside jokes, sweet memories, and epic adventures together. Celebrate with our anniversary cake, check off Year 2 bucket list goals, and read our special letter!
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 z-10 w-full sm:w-auto">
+          <button
+            onClick={() => {
+              kawaiiAudio.playSuccess();
+              onSelectTab('anniversary');
+            }}
+            className="px-6 py-3 rounded-full bg-white text-red-600 font-bold text-sm shadow-md hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-amber-500 animate-bounce" />
+            <span>Enter 1-Year Anniversary Hub 🌟</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (hasClaimedAnnivGift) return;
+              setHasClaimedAnnivGift(true);
+              kawaiiAudio.playSuccess();
+              onClaimDailyReward(365, 10);
+              try {
+                confetti({ particleCount: 70, spread: 80, origin: { y: 0.5 } });
+              } catch {
+                // ignore
+              }
+            }}
+            disabled={hasClaimedAnnivGift}
+            className={`px-5 py-2.5 rounded-full text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
+              hasClaimedAnnivGift
+                ? 'bg-white/20 border-white/40 text-pink-100 cursor-default'
+                : 'bg-amber-400 hover:bg-amber-300 text-amber-950 border-amber-300 shadow-sm cursor-pointer hover:scale-105'
+            }`}
+          >
+            <Gift className="w-4 h-4" />
+            <span>
+              {hasClaimedAnnivGift
+                ? 'Anniversary Gift Claimed! ✨'
+                : 'Claim 1-Yr Gift: +365 Coins & +10 Gems 🎁'}
+            </span>
+          </button>
+        </div>
+      </div>
+
       {/* 1. Grand Hero Banner */}
       <div className="relative rounded-3xl overflow-hidden border-4 border-pink-200 shadow-md bg-gradient-to-r from-rose-100 via-pink-50 to-amber-50 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8">
         {/* Floating background decorative icons */}
@@ -259,7 +324,7 @@ export const HomePortal: React.FC<HomePortalProps> = ({
               </div>
               <h3 className="font-bold text-base text-gray-800 font-display">Dress-Up & Photo Booth</h3>
               <p className="text-xs text-gray-600 mt-1 font-medium leading-relaxed">
-                Mix and match iconic bows, chef aprons, and snap lovely polaroid keepsakes!
+                Mix and match iconic bows, chef aprons, and snap delightful polaroid keepsakes!
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-pink-100 flex items-center justify-between text-xs font-bold text-pink-600">
@@ -365,7 +430,7 @@ export const HomePortal: React.FC<HomePortalProps> = ({
 
           <div className="flex items-center justify-between pt-3 border-t border-pink-200/80 text-xs">
             <span className="text-gray-700">
-              Loves: <strong>{featuredFriend.favoriteTreat}</strong>
+              Favorite: <strong>{featuredFriend.favoriteTreat}</strong>
             </span>
             <button
               onClick={() => {

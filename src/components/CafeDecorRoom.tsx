@@ -3,7 +3,7 @@ import { DECOR_ITEMS, FRIENDS_DATA } from '../data/gameData';
 import { DecorItem } from '../types';
 import { KittySvg } from './KittySvg';
 import { FriendSvg } from './FriendSvg';
-import { kawaiiAudio } from '../audio/kawaiiAudio';
+import { kawaiiAudio, MUSIC_TRACKS } from '../audio/kawaiiAudio';
 import confetti from 'canvas-confetti';
 import { Disc3, Lock, Check, Sparkles, Music, Volume2 } from 'lucide-react';
 
@@ -88,12 +88,6 @@ export const CafeDecorRoom: React.FC<CafeDecorRoomProps> = ({
     else if (item.category === 'table') onChangeTable(item.id);
     else if (item.category === 'plushie') onChangePlushie(item.id);
   };
-
-  const tracks = [
-    { id: 'kitty_cafe', name: "Kitty's Morning Walk", mood: 'Cheerful Chiptune', icon: '☀️' },
-    { id: 'waltz', name: 'Pastel Tea Party', mood: 'Music Box Waltz', icon: '🫖' },
-    { id: 'arcade', name: 'Sugar Rush Arcade', mood: 'Upbeat 8-Bit Groove', icon: '🎮' },
-  ];
 
   return (
     <div className="w-full max-w-5xl mx-auto p-3 sm:p-6 flex flex-col gap-6">
@@ -226,8 +220,8 @@ export const CafeDecorRoom: React.FC<CafeDecorRoomProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {tracks.map((t) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+              {MUSIC_TRACKS.map((t) => {
                 const isActive = activeMusicTrack === t.id && musicEnabled;
                 return (
                   <button
@@ -236,16 +230,26 @@ export const CafeDecorRoom: React.FC<CafeDecorRoomProps> = ({
                       kawaiiAudio.playPop();
                       onChangeMusicTrack(t.id);
                     }}
-                    className={`flex items-center gap-2 p-2.5 rounded-2xl border-2 transition-all text-left cursor-pointer ${
+                    className={`flex items-start gap-2.5 p-3 rounded-2xl border-2 transition-all text-left cursor-pointer relative overflow-hidden ${
                       isActive
-                        ? 'bg-purple-50 border-purple-400 ring-2 ring-purple-200 text-purple-900'
-                        : 'bg-pink-50/50 border-pink-100 hover:bg-pink-100 text-gray-700'
+                        ? 'bg-purple-50 border-purple-400 ring-2 ring-purple-200 text-purple-950 shadow-sm'
+                        : 'bg-pink-50/50 border-pink-100 hover:bg-pink-100/70 text-gray-700'
                     }`}
                   >
-                    <span className="text-xl">{t.icon}</span>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold truncate">{t.name}</p>
-                      <p className="text-[10px] text-gray-500">{t.mood}</p>
+                    <span className="text-2xl mt-0.5">{t.icon}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-bold truncate">{t.name}</p>
+                        {isActive && (
+                          <span className="flex gap-0.5 items-end h-3">
+                            <span className="w-1 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <span className="w-1 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <span className="w-1 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-pink-700 font-medium">{t.mood}</p>
+                      <p className="text-[9px] text-gray-500 truncate mt-0.5">{t.description}</p>
                     </div>
                   </button>
                 );

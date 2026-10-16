@@ -1,7 +1,7 @@
-import React from 'react';
-import { WebsiteTab } from '../types';
-import { Volume2, VolumeX, Music, Image as ImageIcon, Sparkles, Heart } from 'lucide-react';
-import { kawaiiAudio } from '../audio/kawaiiAudio';
+import React, { useState } from 'react';
+import { WebsiteTab, CoupleProfile } from '../types';
+import { Volume2, VolumeX, Music, Image as ImageIcon, Sparkles, Heart, SkipForward, SkipBack, Play, Pause, ChevronDown, Radio } from 'lucide-react';
+import { kawaiiAudio, MUSIC_TRACKS, MusicTrackInfo } from '../audio/kawaiiAudio';
 
 interface WebsiteHeaderProps {
   currentTab: WebsiteTab;
@@ -10,8 +10,13 @@ interface WebsiteHeaderProps {
   strawberryGems: number;
   soundEnabled: boolean;
   musicEnabled: boolean;
+  activeMusicTrack: string;
+  coupleProfile?: CoupleProfile;
   onToggleSound: () => void;
   onToggleMusic: () => void;
+  onChangeMusicTrack: (track: string) => void;
+  onNextMusicTrack: () => void;
+  onPrevMusicTrack: () => void;
   onOpenAlbum: () => void;
   albumCount: number;
 }
@@ -23,12 +28,29 @@ export const WebsiteHeader: React.FC<WebsiteHeaderProps> = ({
   strawberryGems,
   soundEnabled,
   musicEnabled,
+  activeMusicTrack,
+  coupleProfile,
   onToggleSound,
   onToggleMusic,
+  onChangeMusicTrack,
+  onNextMusicTrack,
+  onPrevMusicTrack,
   onOpenAlbum,
   albumCount,
 }) => {
+  const [isMusicMenuOpen, setIsMusicMenuOpen] = useState(false);
+  const [currentVolume, setCurrentVolume] = useState<number>(kawaiiAudio.getMusicVolume());
+
+  const currentTrackInfo = MUSIC_TRACKS.find((t) => t.id === activeMusicTrack) || MUSIC_TRACKS[0];
+
+  const handleSetVolume = (vol: number) => {
+    kawaiiAudio.playPop();
+    kawaiiAudio.setMusicVolume(vol);
+    setCurrentVolume(vol);
+  };
+
   const tabs: { id: WebsiteTab; label: string; icon: string; badge?: string }[] = [
+    { id: 'anniversary', label: '1st Anniversary', icon: '💖', badge: '1 Year!' },
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'games', label: 'Arcade Games', icon: '🎮', badge: 'Play!' },
     { id: 'menu', label: 'Cafe Menu', icon: '🍰' },
@@ -45,17 +67,24 @@ export const WebsiteHeader: React.FC<WebsiteHeaderProps> = ({
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="animate-bounce">🎀</span>
-            <span className="hidden sm:inline">Official Hello Kitty Sweet Cafe & Village Portal</span>
-            <span className="sm:hidden">Hello Kitty Official Cafe</span>
-            <span className="opacity-75">• Fresh Apple Pies Out of the Oven!</span>
+            <span className="font-bold">Happy 1st Anniversary! 🌟 365 Days Together (October 15)</span>
+            <span className="hidden sm:inline opacity-90">• {coupleProfile ? `${coupleProfile.partner1} & ${coupleProfile.partner2}` : 'Tafeh & Tafeha'}</span>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Quick Track preview in top ticker */}
+            <button
+              onClick={() => setIsMusicMenuOpen(!isMusicMenuOpen)}
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-2 py-0.5 rounded-full text-[10px] font-bold text-white transition-colors cursor-pointer"
+              title="Click to Change Music"
+            >
+              <span>🎵</span>
+              <span className="max-w-[130px] truncate">{currentTrackInfo.name}</span>
+              <span className="text-[9px] underline">Change Music</span>
+            </button>
+
             <span className="hidden md:inline text-pink-100">
               "You can never have too many friends!"
-            </span>
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold">
-              Open Daily
             </span>
           </div>
         </div>
@@ -79,12 +108,12 @@ export const WebsiteHeader: React.FC<WebsiteHeaderProps> = ({
               <span className="text-xl font-bold text-red-600 font-display tracking-wide">
                 HELLO KITTY
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 font-bold border border-pink-200 uppercase">
-                Official Website
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold shadow-xs">
+                1 Year Anniversary 💕
               </span>
             </div>
-            <p className="text-[11px] text-pink-500 -mt-0.5 font-medium">
-              Sweet Cafe, Bakery & Village
+            <p className="text-[11px] text-pink-600 -mt-0.5 font-medium">
+              Sweet Cafe • 365 Days of Us
             </p>
           </div>
         </div>
@@ -156,8 +185,9 @@ export const WebsiteHeader: React.FC<WebsiteHeaderProps> = ({
             )}
           </button>
 
-          {/* Audio controls */}
-          <div className="flex items-center gap-1 pl-1 border-l border-pink-200">
+          {/* Sound & Music Controls with interactive Music Box menu */}
+          <div className="relative flex items-center gap-1 pl-1 border-l border-pink-200">
+            {/* SFX toggle */}
             <button
               onClick={() => {
                 kawaiiAudio.playPop();
@@ -170,21 +200,217 @@ export const WebsiteHeader: React.FC<WebsiteHeaderProps> = ({
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
+
+            {/* Quick Skip Track Button */}
             <button
               onClick={() => {
                 kawaiiAudio.playPop();
-                onToggleMusic();
+                onNextMusicTrack();
               }}
-              title={musicEnabled ? 'Pause BGM' : 'Play Kawaii BGM'}
-              className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                musicEnabled ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' : 'bg-gray-100 text-gray-400'
+              title="Next Music Track (Change Song)"
+              className="p-1.5 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-700 transition-colors cursor-pointer"
+            >
+              <SkipForward className="w-4 h-4" />
+            </button>
+
+            {/* Music Player Hub Button */}
+            <button
+              onClick={() => {
+                kawaiiAudio.playPop();
+                setIsMusicMenuOpen(!isMusicMenuOpen);
+              }}
+              title="Open Music Player & Change Track"
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all cursor-pointer font-bold ${
+                musicEnabled 
+                  ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border border-purple-300 shadow-xs' 
+                  : 'bg-gray-100 text-gray-400'
               }`}
             >
-              <Music className="w-4 h-4" />
+              <Music className={`w-3.5 h-3.5 ${musicEnabled ? 'animate-bounce text-purple-600' : ''}`} />
+              <span className="hidden sm:inline text-[11px] max-w-[80px] truncate">
+                {currentTrackInfo.icon} {currentTrackInfo.name}
+              </span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${isMusicMenuOpen ? 'rotate-180' : ''}`} />
             </button>
+
+            {/* Floating Kawaii Music Player Popover */}
+            {isMusicMenuOpen && (
+              <div 
+                className="absolute top-10 right-0 w-80 sm:w-92 bg-white rounded-3xl shadow-2xl border-2 border-pink-300 p-4 z-50 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-150 text-pink-950"
+                style={{ filter: 'drop-shadow(0 10px 25px rgba(255, 77, 109, 0.15))' }}
+              >
+                {/* Popover Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-pink-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🎵</span>
+                    <div>
+                      <h4 className="text-xs font-bold text-red-600 uppercase tracking-wide">
+                        Sweet Music Box
+                      </h4>
+                      <p className="text-[10px] text-pink-600">Sanrio Procedural Soundscapes</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsMusicMenuOpen(false)}
+                    className="text-gray-400 hover:text-gray-600 text-sm font-bold w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Now Playing Mini Player Card */}
+                <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 rounded-2xl p-3 border border-pink-200 flex flex-col gap-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-pink-200 flex items-center justify-center text-2xl shadow-xs">
+                        {currentTrackInfo.icon}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-red-100 text-red-700 font-bold">
+                            {musicEnabled ? 'NOW PLAYING' : 'PAUSED'}
+                          </span>
+                          <span className="text-[10px] text-gray-500 font-mono">{currentTrackInfo.tempo}</span>
+                        </div>
+                        <p className="text-xs font-bold text-gray-900 truncate mt-0.5">
+                          {currentTrackInfo.name}
+                        </p>
+                        <p className="text-[10px] text-pink-700 truncate">{currentTrackInfo.mood}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Player Transport Controls */}
+                  <div className="flex items-center justify-center gap-3 pt-1 border-t border-pink-200/60">
+                    <button
+                      onClick={() => {
+                        kawaiiAudio.playPop();
+                        onPrevMusicTrack();
+                      }}
+                      title="Previous Song"
+                      className="p-2 rounded-full bg-white hover:bg-pink-100 text-pink-700 border border-pink-200 shadow-xs transition-transform hover:scale-105 cursor-pointer"
+                    >
+                      <SkipBack className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        kawaiiAudio.playPop();
+                        onToggleMusic();
+                      }}
+                      title={musicEnabled ? 'Pause' : 'Play'}
+                      className="px-4 py-1.5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold flex items-center gap-1.5 shadow-sm hover:scale-105 transition-transform cursor-pointer text-xs"
+                    >
+                      {musicEnabled ? (
+                        <>
+                          <Pause className="w-3.5 h-3.5 fill-current" />
+                          <span>Pause</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          <span>Play</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        kawaiiAudio.playPop();
+                        onNextMusicTrack();
+                      }}
+                      title="Next Song (Change Track)"
+                      className="p-2 rounded-full bg-white hover:bg-pink-100 text-pink-700 border border-pink-200 shadow-xs transition-transform hover:scale-105 cursor-pointer"
+                    >
+                      <SkipForward className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Volume Level Preset Selector */}
+                  <div className="flex items-center justify-between pt-1 text-[10px] text-pink-800">
+                    <span className="font-bold flex items-center gap-1">
+                      <Volume2 className="w-3 h-3 text-pink-500" /> Volume:
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {[
+                        { label: 'Soft', val: 0.3 },
+                        { label: 'Cozy', val: 0.6 },
+                        { label: 'Full', val: 1.0 },
+                      ].map((vol) => (
+                        <button
+                          key={vol.label}
+                          onClick={() => handleSetVolume(vol.val)}
+                          className={`px-2 py-0.5 rounded-full font-bold transition-colors cursor-pointer ${
+                            Math.abs(currentVolume - vol.val) < 0.1
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-white hover:bg-pink-100 text-pink-700 border border-pink-200'
+                          }`}
+                        >
+                          {vol.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Song Selection List */}
+                <div className="flex flex-col gap-1.5 max-h-56 overflow-y-auto pr-1">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                    Select Any Song ({MUSIC_TRACKS.length})
+                  </span>
+
+                  {MUSIC_TRACKS.map((t) => {
+                    const isCurrent = activeMusicTrack === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => {
+                          kawaiiAudio.playPop();
+                          onChangeMusicTrack(t.id);
+                        }}
+                        className={`flex items-center gap-2.5 p-2 rounded-xl text-left transition-all cursor-pointer ${
+                          isCurrent
+                            ? 'bg-red-50 border border-red-300 text-red-950 font-bold shadow-xs'
+                            : 'hover:bg-pink-50/70 border border-transparent text-gray-700'
+                        }`}
+                      >
+                        <span className="text-xl">{t.icon}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs truncate">{t.name}</p>
+                            {isCurrent && musicEnabled && (
+                              <span className="text-[10px] text-red-500 font-bold animate-pulse">
+                                Playing 🎶
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-pink-600/80 truncate">{t.mood}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Random Track Button */}
+                <button
+                  onClick={() => {
+                    kawaiiAudio.playPop();
+                    const remaining = MUSIC_TRACKS.filter((t) => t.id !== activeMusicTrack);
+                    const pick = remaining[Math.floor(Math.random() * remaining.length)];
+                    onChangeMusicTrack(pick.id);
+                  }}
+                  className="w-full py-1.5 rounded-xl bg-pink-100 hover:bg-pink-200 text-pink-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>🎲</span>
+                  <span>Surprise Me / Random Track</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </header>
   );
 };
+
