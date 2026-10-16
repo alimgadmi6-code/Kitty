@@ -413,7 +413,7 @@ export const COUPLE_BUCKET_LIST: BucketListItem[] = [
   { id: 'b4', title: 'tokli mn makelti 😊🤞', category: 'Food', completed: false },
   { id: 'b5', title: 'twali tokli 3la ro7k wa tochrbi il ma 💧', category: 'Care', completed: false },
   { id: 'b6', title: 'n7ki m3a sabah bi tari9aten ma 🤷‍♂️', category: 'Fun', completed: false },
-  { id: 'b7', title: 'nchru dbach m3a b3adnaa(3la dha9 b3adna zada) 😈', category: 'Shopping', completed: false }
+  { id: 'b7', title: 'n9ru 3la rwa7na wa na3mlu ili n7bu 3lih 🙏', category: 'Goals', completed: false }
 ];
 
 export const ANNIVERSARY_REASONS: string[] = [

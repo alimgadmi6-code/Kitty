@@ -59,7 +59,13 @@ export default function App() {
             );
             migratedBucketList = [...INITIAL_GAME_STATE.bucketList, ...userCustomGoals];
           } else {
-            migratedBucketList = parsed.bucketList;
+            // Check if item 7 has old text
+            migratedBucketList = parsed.bucketList.map((item: BucketListItem) => {
+              if (item.title && item.title.includes('nchru dbach')) {
+                return { ...item, title: 'n9ru 3la rwa7na wa na3mlu ili n7bu 3lih 🙏' };
+              }
+              return item;
+            });
           }
         }
 
