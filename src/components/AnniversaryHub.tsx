@@ -9,6 +9,7 @@ import {
   BookHeart, Check, Plus, Edit3, Lock, Unlock, Camera, Music, 
   RotateCcw, Share2, Award, ChevronRight, Star, Quote
 } from 'lucide-react';
+import { saveAnniversaryWish, saveAnniversaryLetter, saveBucketGoal } from '../lib/supabase';
 
 interface AnniversaryHubProps {
   coupleProfile: CoupleProfile;
@@ -127,6 +128,9 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
     kawaiiAudio.playSuccess();
     setIsWishing(false);
     setCakeStep(2);
+    if (wishMadeText.trim()) {
+      saveAnniversaryWish(wishMadeText.trim(), coupleProfile.partner2);
+    }
   };
 
   const handleBlowCandle = () => {
@@ -160,13 +164,15 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
     e.preventDefault();
     if (!newBucketTitle.trim()) return;
     kawaiiAudio.playSuccess();
+    const cleanGoal = newBucketTitle.trim();
     const newItem: BucketListItem = {
       id: `bucket_${Date.now()}`,
-      title: newBucketTitle.trim(),
+      title: cleanGoal,
       category: 'Romantic Goals',
       completed: false,
     };
     onUpdateBucketList([...bucketList, newItem]);
+    saveBucketGoal(cleanGoal, coupleProfile.partner2);
     setNewBucketTitle('');
   };
 
@@ -174,13 +180,18 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     kawaiiAudio.playSuccess();
+    const newNote = customLetter.trim() || coupleProfile.customNote;
+    const authorName = partner2Name.trim() || coupleProfile.partner2;
     onUpdateCoupleProfile({
       ...coupleProfile,
       partner1: partner1Name.trim() || 'Tafeh',
-      partner2: partner2Name.trim() || 'Tafeha',
+      partner2: authorName,
       anniversaryDate: annivDate,
-      customNote: customLetter.trim() || coupleProfile.customNote,
+      customNote: newNote,
     });
+    if (newNote) {
+      saveAnniversaryLetter(newNote, authorName);
+    }
     setIsEditingProfile(false);
     triggerHeartConfetti();
   };
@@ -506,6 +517,9 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
                       onUpdateCoupleProfile({ ...coupleProfile, customNote: customLetter });
                       setIsEditingLetter(false);
                       triggerHeartConfetti();
+                      if (customLetter.trim()) {
+                        saveAnniversaryLetter(customLetter.trim(), coupleProfile.partner2);
+                      }
                     }}
                     className="self-end px-3 py-1 bg-red-500 text-white rounded-full text-xs font-bold cursor-pointer"
                   >

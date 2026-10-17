@@ -6,6 +6,7 @@ import { FriendSvg } from './FriendSvg';
 import { kawaiiAudio } from '../audio/kawaiiAudio';
 import confetti from 'canvas-confetti';
 import { Sparkles, ArrowRight, Heart, Send, Gift, Star, Award, Check } from 'lucide-react';
+import { saveGuestbookMessage } from '../lib/supabase';
 
 interface HomePortalProps {
   onSelectTab: (tab: WebsiteTab) => void;
@@ -84,6 +85,7 @@ export const HomePortal: React.FC<HomePortalProps> = ({
 
     kawaiiAudio.playSuccess();
     onAddGuestbookEntry(newEntry);
+    saveGuestbookMessage(newEntry.author, newEntry.message);
     setGbAuthor('');
     setGbMessage('');
 
