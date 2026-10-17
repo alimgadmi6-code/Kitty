@@ -55,7 +55,8 @@ export default function App() {
           if (hasOldDefaults) {
             // Keep any custom goals the user added manually, while replacing old template suggestions
             const userCustomGoals = parsed.bucketList.filter((b: BucketListItem) => 
-              !isOldDefaultItem(b) && !INITIAL_GAME_STATE.bucketList.some(item => item.title === b.title)
+              !isOldDefaultItem(b) && 
+              !INITIAL_GAME_STATE.bucketList.some(item => item.id === b.id || item.title === b.title)
             );
             migratedBucketList = [...INITIAL_GAME_STATE.bucketList, ...userCustomGoals];
           } else {
@@ -68,6 +69,14 @@ export default function App() {
             });
           }
         }
+
+        // Strictly guarantee unique IDs across bucketList
+        const seenIds = new Set<string>();
+        migratedBucketList = migratedBucketList.filter((item) => {
+          if (!item || !item.id || seenIds.has(item.id)) return false;
+          seenIds.add(item.id);
+          return true;
+        });
 
         return {
           ...INITIAL_GAME_STATE,

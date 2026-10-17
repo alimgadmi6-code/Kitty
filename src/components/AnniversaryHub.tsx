@@ -9,7 +9,10 @@ import {
   BookHeart, Check, Plus, Edit3, Lock, Unlock, Camera, Music, 
   RotateCcw, Share2, Award, ChevronRight, Star, Quote
 } from 'lucide-react';
-import { saveAnniversaryWish, saveAnniversaryLetter, saveBucketGoal } from '../lib/supabase';
+import { 
+  saveAnniversaryWish, saveAnniversaryLetter, saveBucketGoal, 
+  getSupabase, saveSupabaseCredentials, getSupabaseCredentials, testSupabaseConnection 
+} from '../lib/supabase';
 
 interface AnniversaryHubProps {
   coupleProfile: CoupleProfile;
@@ -41,7 +44,23 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
   const [annivDate, setAnnivDate] = useState<string>(coupleProfile.anniversaryDate);
   const [customLetter, setCustomLetter] = useState<string>(coupleProfile.customNote);
 
-  // Anniversary Letter Envelope state
+  // Supabase Database Connection States
+  const [supabaseUrlInput, setSupabaseUrlInput] = useState<string>(() => getSupabaseCredentials().url);
+  const [supabaseKeyInput, setSupabaseKeyInput] = useState<string>(() => getSupabaseCredentials().key);
+  const [supabaseTestStatus, setSupabaseTestStatus] = useState<string | null>(null);
+  const [isTestingSupabase, setIsTestingSupabase] = useState<boolean>(false);
+  const [showDbConfig, setShowDbConfig] = useState<boolean>(false);
+
+  const handleTestSupabase = async () => {
+    setIsTestingSupabase(true);
+    setSupabaseTestStatus('Connecting to Supabase and sending a test row...');
+    saveSupabaseCredentials(supabaseUrlInput, supabaseKeyInput);
+    const res = await testSupabaseConnection();
+    setIsTestingSupabase(false);
+    setSupabaseTestStatus(res.message);
+  };
+
+  const isSupabaseConnected = Boolean(getSupabase());
   const [isLetterOpen, setIsLetterOpen] = useState<boolean>(false);
   const [isEditingLetter, setIsEditingLetter] = useState<boolean>(false);
 
@@ -606,9 +625,9 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
 
         {/* Checklist Items Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-          {bucketList.map((item) => (
+          {bucketList.map((item, idx) => (
             <div
-              key={item.id}
+              key={`${item.id || 'bucket'}_${idx}`}
               onClick={() => handleToggleBucket(item.id)}
               className={`flex items-center gap-3.5 p-3.5 rounded-2xl border-2 transition-all cursor-pointer text-xs sm:text-sm select-none ${
                 item.completed 
@@ -851,6 +870,73 @@ export const AnniversaryHub: React.FC<AnniversaryHubProps> = ({
                 rows={4}
                 className="w-full p-2.5 border-2 border-pink-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
+            </div>
+
+            {/* Supabase Status Banner & Direct Setup */}
+            <div className="bg-pink-50/70 p-3.5 rounded-2xl border border-pink-200 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-pink-950 flex items-center gap-1.5">
+                  <span>⚡</span> Supabase Live Messages
+                </span>
+                <span
+                  className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                    isSupabaseConnected
+                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                      : 'bg-amber-100 text-amber-800 border border-amber-300'
+                  }`}
+                >
+                  {isSupabaseConnected ? '● Connected' : '○ Waiting for Keys'}
+                </span>
+              </div>
+              <p className="text-[11px] text-pink-700/80 leading-relaxed">
+                Connect your Supabase database so all her wishes, letter updates, and bucket list goals sync directly to your dashboard in real time.
+              </p>
+
+              {/* Direct Setup / Test Panel */}
+              <div className="bg-white p-3 rounded-xl border border-pink-200 flex flex-col gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-600 block">Supabase Project URL:</label>
+                  <input
+                    type="text"
+                    value={supabaseUrlInput}
+                    onChange={(e) => setSupabaseUrlInput(e.target.value)}
+                    placeholder="https://your-project.supabase.co"
+                    className="w-full px-2.5 py-1.5 border border-pink-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-pink-400"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-600 block">Supabase Anon Public Key:</label>
+                  <input
+                    type="password"
+                    value={supabaseKeyInput}
+                    onChange={(e) => setSupabaseKeyInput(e.target.value)}
+                    placeholder="eyJhbGciOi..."
+                    className="w-full px-2.5 py-1.5 border border-pink-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-pink-400 font-mono"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    disabled={isTestingSupabase || !supabaseUrlInput.trim() || !supabaseKeyInput.trim()}
+                    onClick={handleTestSupabase}
+                    className="px-3 py-1.5 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white rounded-xl text-xs font-bold cursor-pointer transition-all shadow-xs"
+                  >
+                    {isTestingSupabase ? 'Testing...' : '⚡ Save & Test Connection'}
+                  </button>
+                  <span className="text-[10px] text-gray-400">Saves credentials & tests</span>
+                </div>
+
+                {supabaseTestStatus && (
+                  <div className={`p-2 rounded-xl text-[11px] leading-relaxed font-medium mt-1 ${
+                    supabaseTestStatus.startsWith('✅')
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                      : 'bg-amber-50 text-amber-800 border border-amber-200'
+                  }`}>
+                    {supabaseTestStatus}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex gap-2 justify-end pt-2 border-t border-pink-100">

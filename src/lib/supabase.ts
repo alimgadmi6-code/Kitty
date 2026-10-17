@@ -10,7 +10,6 @@ let supabaseInstance: SupabaseClient | null = null;
 export function getSupabase(): SupabaseClient | null {
   if (supabaseInstance) return supabaseInstance;
 
-  // Check env vars first, or check localStorage for easy testing/local setup
   const url = SUPABASE_URL || localStorage.getItem('supabase_url') || '';
   const key = SUPABASE_ANON_KEY || localStorage.getItem('supabase_anon_key') || '';
 
@@ -26,6 +25,62 @@ export function getSupabase(): SupabaseClient | null {
     return null;
   }
 }
+
+export function saveSupabaseCredentials(url: string, key: string) {
+  if (url) localStorage.setItem('supabase_url', url.trim());
+  else localStorage.removeItem('supabase_url');
+
+  if (key) localStorage.setItem('supabase_anon_key', key.trim());
+  else localStorage.removeItem('supabase_anon_key');
+
+  supabaseInstance = null;
+}
+
+export function getSupabaseCredentials() {
+  const url = SUPABASE_URL || localStorage.getItem('supabase_url') || '';
+  const key = SUPABASE_ANON_KEY || localStorage.getItem('supabase_anon_key') || '';
+  return { url, key, isFromEnv: Boolean(SUPABASE_URL && SUPABASE_ANON_KEY) };
+}
+
+export async function testSupabaseConnection(): Promise<{ success: boolean; message: string }> {
+  const supabase = getSupabase();
+  if (!supabase) {
+    return { success: false, message: 'Supabase URL or Anon Key is missing. Please enter them above.' };
+  }
+
+  try {
+    const { error } = await supabase.from('anniversary_messages').insert([
+      {
+        type: 'test_ping',
+        content: 'Supabase connection test! 🌟 If you see this row, everything is working perfectly!',
+        author: 'Tafeh (System Test)',
+        metadata: { testedAt: new Date().toISOString() }
+      }
+    ]);
+
+    if (!error) {
+      return { success: true, message: '✅ Success! Test row inserted into "anniversary_messages". Check your Supabase Table Editor now!' };
+    }
+
+    // Try fallback to 'wishes' table if 'anniversary_messages' table wasn't created
+    if (error.message.includes('anniversary_messages')) {
+      const { error: wishErr } = await supabase.from('wishes').insert([
+        {
+          wish: 'Supabase connection test! 🌟',
+          author: 'System Test'
+        }
+      ]);
+      if (!wishErr) {
+        return { success: true, message: '✅ Success! Connected to "wishes" table! Check your Table Editor now.' };
+      }
+    }
+
+    return { success: false, message: `Database notice: ${error.message}` };
+  } catch (err: any) {
+    return { success: false, message: `Connection error: ${err?.message || 'Could not connect to Supabase.'}` };
+  }
+}
+
 
 export interface SubmissionPayload {
   type: 'wish' | 'letter' | 'bucket_goal' | 'guestbook';
